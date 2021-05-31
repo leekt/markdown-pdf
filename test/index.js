@@ -178,40 +178,12 @@ test('should write to multiple paths when converting multiple files', function (
   })
 })
 
-test('should accept remarkable preset', function (t) {
-  t.plan(2)
-
-  var html = ''
-  var opts = {
-    remarkable: { preset: 'full' },
-    preProcessHtml: function () {
-      return through(
-        function transform (chunk, enc, cb) {
-          html += chunk
-          cb()
-        },
-        function flush (cb) {
-          var htmlSupTagFound = (html.indexOf('<sup>st</sup>') > -1)
-          t.ok(htmlSupTagFound, 'html <sup> tag not found for preset "full"')
-          cb()
-        }
-      )
-    }
-  }
-
-  // Preset 'full' - expecting <sup>-tag in html
-  markdownpdf(opts).from.string('1^st^ of January').to.string(function (er, pdfStr) {
-    t.ifError(er)
-    t.end()
-  })
-})
-
-test('should initialize remarkable plugins', function (t) {
+test('should initialize markdownIt plugins', function (t) {
   t.plan(2)
 
   var pluginInit = false
 
-  var remarkableOpts = {
+  var markdownItOpts = {
     plugins: [
       // should skip non-functions
       undefined,
@@ -222,7 +194,7 @@ test('should initialize remarkable plugins', function (t) {
     ]
   }
 
-  markdownpdf({ remarkable: remarkableOpts }).from(path.join(__dirname, '/fixtures/ipsum.md')).to.string(function (er, pdfStr) {
+  markdownpdf({ markdownIt: markdownItOpts }).from(path.join(__dirname, '/fixtures/ipsum.md')).to.string(function (er, pdfStr) {
     t.ifError(er)
 
     t.assert(pluginInit, 'check plugin init')

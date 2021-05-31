@@ -3,7 +3,7 @@ var path = require('path')
 var childProcess = require('child_process')
 var through = require('through2')
 var extend = require('extend')
-var { Remarkable } = require('remarkable')
+var MarkdownIt = require('markdown-it')
 var hljs = require('highlight.js')
 var tmp = require('tmp')
 var duplexer = require('duplexer')
@@ -25,10 +25,10 @@ function markdownpdf (opts) {
   opts.loadTimeout = opts.loadTimeout == null ? 10000 : opts.loadTimeout
   opts.preProcessMd = opts.preProcessMd || function () { return through() }
   opts.preProcessHtml = opts.preProcessHtml || function () { return through() }
-  opts.remarkable = extend({ breaks: true }, opts.remarkable)
-  opts.remarkable.preset = opts.remarkable.preset || 'default'
-  opts.remarkable.plugins = opts.remarkable.plugins || []
-  opts.remarkable.syntax = opts.remarkable.syntax || []
+  opts.markdownIt = extend({ breaks: true }, opts.markdownIt)
+  opts.markdownIt.preset = opts.markdownIt.preset || 'default'
+  opts.markdownIt.plugins = opts.markdownIt.plugins || []
+  opts.markdownIt.syntax = opts.markdownIt.syntax || []
 
   var md = ''
 
@@ -40,7 +40,7 @@ function markdownpdf (opts) {
     function flush (cb) {
       var self = this
 
-      var mdParser = new Remarkable(opts.remarkable.preset, extend({
+      var mdParser = new MarkdownIt(opts.markdownIt.preset, extend({
         highlight: function (str, lang) {
           if (lang && hljs.getLanguage(lang)) {
             try {
@@ -54,15 +54,15 @@ function markdownpdf (opts) {
 
           return ''
         }
-      }, opts.remarkable))
+      }, opts.markdownIt))
 
-      opts.remarkable.plugins.forEach(function (plugin) {
+      opts.markdownIt.plugins.forEach(function (plugin) {
         if (plugin && typeof plugin === 'function') {
           mdParser.use(plugin)
         }
       })
 
-      opts.remarkable.syntax.forEach(function (rule) {
+      opts.markdownIt.syntax.forEach(function (rule) {
         try {
           mdParser.core.ruler.enable([rule])
         } catch (err) {}

@@ -60,7 +60,7 @@ This is a image
 
 
 ```js
-var Remarkable = require('remarkable');
+var Remarkable = require('markdown-it');
 var hljs       = require('highlight.js') // https://highlightjs.org/
 
 // Actual default values
