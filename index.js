@@ -24,7 +24,6 @@ function markdownpdf (opts) {
   opts.renderDelay = opts.renderDelay == null ? 0 : opts.renderDelay
   opts.loadTimeout = opts.loadTimeout == null ? 10000 : opts.loadTimeout
   opts.preProcessMd = opts.preProcessMd || function () { return through() }
-  opts.preProcessFullMd = opts.preProcessFullMd || function () { return through() }
   opts.preProcessHtml = opts.preProcessHtml || function () { return through() }
   opts.markdownIt = extend({ breaks: true }, opts.markdownIt)
   opts.markdownIt.preset = opts.markdownIt.preset || 'default'
@@ -126,7 +125,6 @@ function markdownpdf (opts) {
       // Setup the pipeline
       inputStream
         .pipe(opts.preProcessMd())
-        .pipe(opts.preProcessFullMd())
         .pipe(mdToHtml)
         .pipe(opts.preProcessHtml())
         .pipe(htmlToTmpHtmlFile)
